@@ -1,30 +1,30 @@
-# app.py
-from flask import Flask, request, jsonify
-import pandas as pd
-from sklearn.linear_model import LinearRegression
+from flask import Flask, request, render_template
+import joblib
+import numpy as np
 
 app = Flask(__name__)
 
+# Load the trained model
+iot = joblib.load('model.joblib')
+
 @app.route('/')
 def home():
-    return "Welcome to the Machine Learning App"
-
-@app.route('/upload', methods=['POST'])
-def upload_data():
-    file = request.files['file']
-    data = pd.read_csv(file)
-    return jsonify(data.head().to_dict())
+    return render_template('index.html')
 
 @app.route('/predict', methods=['POST'])
 def predict():
-    data = request.json
-    df = pd.DataFrame(data)
-    model = LinearRegression()
-    X = df[['feature1', 'feature2']]
-    y = df['target']
-    model.fit(X, y)
-    predictions = model.predict(X)
-    return jsonify(predictions.tolist())
+    # Get form data
+    feature1 = float(request.form['feature1'])
+    feature2 = float(request.form['feature2'])
+    
+    # Prepare the feature vector
+    features = np.array([[feature1, feature2]])
+    
+    # Make prediction
+    prediction = iot.predict(features)
+    
+    # Return prediction on the web page
+    return render_template('index.html', prediction=prediction[0])
 
-if __name__ == "__main__":
-    app.run(host='0.0.0.0', port=5000)
+if __name__ == '__main__':
+    app.run(debug=True)

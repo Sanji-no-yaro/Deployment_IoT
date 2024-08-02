@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Prediction App</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>Prediction App</h1>
+        <form action="/predict" method="post">
+            <label for="feature1">Feature 1:</label>
+            <input type="text" id="feature1" name="feature1" placeholder="Enter feature 1" required>
+            <label for="feature2">Feature 2:</label>
+            <input type="text" id="feature2" name="feature2" placeholder="Enter feature 2" required>
+            <input type="submit" value="Predict">
+        </form>
+        {% if prediction is not none %}
+            <h2>Prediction: {{ prediction }}</h2>
+        {% endif %}
+    </div>
+</body>
+</html>
